@@ -1,0 +1,67 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 18.x ]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-pnpm-store-
+
+      - name: Build production docker image
+        run: docker build -t edmondoflynn/semiprose-api:latest --no-cache -f ./docker/Dockerfile .
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: edmondoflynn
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push to container registry
+        run: docker push edmondoflynn/semiprose-api --all-tags
+
+      - name: Run migrations
+        run: pnpm migrate:up
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Promote app image
+        uses: floms/action-caprover@v1
+        with:
+          host: https://captain.root.syzible.com
+          app: semiprose-api
+          password: ${{ secrets.CAPROVER_PASSWORD }}
+          image: docker.io/edmondoflynn/semiprose-api:latest
+
