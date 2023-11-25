@@ -1,4 +1,4 @@
-name: Deploy
+name: Build and Deploy
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  tag:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
