@@ -40,6 +40,9 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: ${{ runner.os }}-pnpm-store-
 
+      - name: Install dependencies
+        run: pnpm install
+
       - name: Build production docker image
         run: docker build -t edmondoflynn/semiprose-api:latest --no-cache -f ./docker/Dockerfile .
 
