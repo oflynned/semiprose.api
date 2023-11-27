@@ -6,6 +6,9 @@ export class WaitlistEntity {
   @PrimaryKey()
   id: string = uuid();
 
+  @Property({ type: 'datetime', nullable: false })
+  createdAt = new Date();
+
   @Property({ type: 'string', nullable: false })
   email: string;
 }
