@@ -7,6 +7,6 @@ export class WaitlistController {
 
   @Post('/')
   async createWaitlist(@Body() { email }: { email: string }) {
-    return this.waitlistService.enlistEmail(email);
+    await this.waitlistService.enlistEmail(email);
   }
 }
