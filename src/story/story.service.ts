@@ -1,23 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { Story } from '../analyser/content';
+import { EntityManager } from '@mikro-orm/postgresql';
+import { DraftEntity, StoryEntity, StoryState, UserEntity } from '../entity';
 
 @Injectable()
 export class StoryService {
-  constructor() {}
+  constructor(private readonly manager: EntityManager) {}
 
-  getStories() {
-    return [];
-  }
+  async publishStory(draft: DraftEntity, author: UserEntity) {
+    const story = new StoryEntity();
 
-  getStoryById(id: string) {
-    return null;
-  }
+    story.title = draft.title;
+    story.paragraphs = draft.paragraphs;
+    story.state = StoryState.SUBMITTED;
+    story.author = author;
 
-  createDraft(story: Story) {
+    await this.manager.persistAndFlush(story);
+
     return story;
   }
 
-  publish(storyId: string) {
-    return null;
+  async getStories(author: UserEntity) {
+    return this.manager.find(StoryEntity, { author });
+  }
+
+  async getStoryById(id: string, author: UserEntity) {
+    return this.manager.findOne(StoryEntity, { id, author });
   }
 }

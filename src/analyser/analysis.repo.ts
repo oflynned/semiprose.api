@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { Feedback } from './types';
+import { DraftEntity } from '../entity';
 
 @Injectable()
 export class AnalysisRepo {
   constructor() {}
 
-  createFeedback(storyId: string, feedback: Feedback) {
+  createFeedback(draft: DraftEntity, feedback: Feedback) {
     return null;
   }
 
-  getLatestFeedback(storyId: string) {
+  getLatestFeedback(draft: DraftEntity) {
     return null;
   }
 }

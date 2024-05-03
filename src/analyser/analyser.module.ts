@@ -5,10 +5,10 @@ import { ParserModule } from '../parser/parser.module';
 import { ChatGptModule } from '../classification-engine/chat-gpt/chat-gpt.module';
 import { FeatureFlagModule } from '../feature-flag/feature-flag.module';
 import { AnalysisRepo } from './analysis.repo';
-import { StoryModule } from '../story/story.module';
+import { DraftModule } from '../draft/draft.module';
 
 @Module({
-  imports: [ChatGptModule, ParserModule, FeatureFlagModule, StoryModule],
+  imports: [ChatGptModule, ParserModule, FeatureFlagModule, DraftModule],
   controllers: [AnalyserController],
   providers: [AnalyserService, AnalysisRepo],
 })

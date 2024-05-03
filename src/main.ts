@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { EnvironmentService } from './environment/environment.service';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,7 +11,7 @@ async function bootstrap() {
   const port = app.get(EnvironmentService).getPort();
 
   await app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    Logger.log(`Server is running on port ${port}`);
   });
 }
 bootstrap();

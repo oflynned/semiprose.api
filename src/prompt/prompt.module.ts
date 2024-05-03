@@ -7,5 +7,6 @@ import { ChatGptModule } from '../classification-engine/chat-gpt/chat-gpt.module
   imports: [ChatGptModule],
   controllers: [PromptController],
   providers: [PromptService],
+  exports: [PromptService],
 })
 export class PromptModule {}
