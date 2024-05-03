@@ -18,4 +18,16 @@ export class EnvironmentService {
   getDatabaseCertificate() {
     return this.secretService.getDecodedValue('ENCODED_DATABASE_CERTIFICATE');
   }
+
+  getSupabaseUrl() {
+    return this.secretService.getValue('SUPABASE_URL');
+  }
+
+  getSupabaseKey() {
+    return this.secretService.getValue('SUPABASE_KEY');
+  }
+
+  getSupabaseSecret() {
+    return this.secretService.getValue('SUPABASE_SECRET');
+  }
 }

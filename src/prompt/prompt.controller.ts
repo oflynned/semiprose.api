@@ -1,12 +1,17 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { PromptService } from './prompt.service';
 
-@Controller('/prompt')
+@Controller('/prompts')
 export class PromptController {
   constructor(private readonly promptService: PromptService) {}
 
-  @Get('/')
+  @Get('/latest')
   async getWritingPrompt() {
     return this.promptService.getCurrentWritingPrompt();
+  }
+
+  @Get('/:promptId')
+  async getPromptById(@Param('promptId') promptId: string) {
+    return this.promptService.getPromptById(promptId);
   }
 }

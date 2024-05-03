@@ -7,28 +7,35 @@ import {
   Post,
 } from '@nestjs/common';
 import { AnalyserService } from './analyser.service';
+import { FeatureFlagService } from '../feature-flag/feature-flag.service';
+import { UserEntity } from '../entity';
+import { User } from '../decorators/user.decorator';
 
 @Controller('/analyser')
 export class AnalyserController {
-  constructor(private readonly analyserService: AnalyserService) {}
+  constructor(
+    private readonly analyserService: AnalyserService,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {}
 
   @Post('/feedback')
   async requestFeedback(
-    @Body() { title, paragraphs }: { title: string; paragraphs: string[] },
+    @Body() { draftId }: { draftId: string },
+    @User() user: UserEntity,
   ) {
-    // if (!this.featureFlagService.isAnalysisEnabled()) {
-    throw new NotFoundException(`Feature is not enabled`);
-    // }
+    if (!this.featureFlagService.isFlagEnabled('ENABLE_ANALYSIS_FEATURE')) {
+      throw new NotFoundException(`Feature is not enabled`);
+    }
 
-    // const story = await this.storyService.getStoryById('storyId');
-    // const prompt = await this.promptService.getCurrentWritingPrompt();
-    //
-    // return this.analyserService.requestFeedback(story);
+    return this.analyserService.requestFeedback(draftId, user);
   }
 
-  @Get('/feedback/:storyId')
-  async getFeedback(@Param('storyId') storyId: string) {
-    const feedback = await this.analyserService.getFeedback(storyId);
+  @Get('/feedback/draft/:draftId')
+  async getFeedback(
+    @Param('draftId') draftId: string,
+    @User() user: UserEntity,
+  ) {
+    const feedback = await this.analyserService.getFeedback(draftId, user);
 
     if (feedback) {
       return feedback;

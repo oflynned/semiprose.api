@@ -10,7 +10,8 @@ import {
 } from '../classification-engine/prompt';
 import { ChatGptService } from '../classification-engine/chat-gpt/chat-gpt.service';
 import { AnalysisRepo } from './analysis.repo';
-import { StoryService } from '../story/story.service';
+import { UserEntity } from '../entity';
+import { DraftService } from '../draft/draft.service';
 
 type Toxicity = z.infer<typeof ToxicitySchema>;
 type Feedback = z.infer<typeof FeedbackSchema>;
@@ -21,7 +22,7 @@ export class AnalyserService {
     private readonly chatgpt: ChatGptService,
     private readonly parserService: ParserService,
     private readonly analysisRepo: AnalysisRepo,
-    private readonly storyService: StoryService,
+    private readonly draftService: DraftService,
   ) {}
 
   async getToxicity(story: Story) {
@@ -31,11 +32,11 @@ export class AnalyserService {
     return this.parserService.toShape<Toxicity>(response, prompt.getSchema());
   }
 
-  async requestFeedback(storyId: string) {
-    const story = await this.storyService.getStoryById(storyId);
+  async requestFeedback(draftId: string, user: UserEntity) {
+    const draft = await this.draftService.getDraftById(draftId, user);
 
     // TODO this should really be moved to a queue since it's a long running operation
-    const prompt = new GetFeedbackPrompt([story.title, ...story.paragraphs]);
+    const prompt = new GetFeedbackPrompt([draft.title, ...draft.paragraphs]);
     const response = await this.chatgpt.prompt(prompt);
 
     const feedback = await this.parserService.toShape<Feedback>(
@@ -43,10 +44,12 @@ export class AnalyserService {
       prompt.getSchema(),
     );
 
-    return this.analysisRepo.createFeedback(storyId, feedback);
+    return this.analysisRepo.createFeedback(draft, feedback);
   }
 
-  async getFeedback(storyId: string) {
-    return this.analysisRepo.getLatestFeedback(storyId);
+  async getFeedback(draftId: string, user: UserEntity) {
+    const draft = await this.draftService.getDraftById(draftId, user);
+
+    return this.analysisRepo.getLatestFeedback(draft);
   }
 }

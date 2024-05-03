@@ -15,15 +15,21 @@ import { SecretModule } from './secret/secret.module';
 import { EnvironmentModule } from './environment/environment.module';
 import { EnvironmentService } from './environment/environment.service';
 import { defineConfig } from '@mikro-orm/postgresql';
+import { SupabaseModule } from './supabase/supabase.module';
+import { PassportModule } from '@nestjs/passport';
+import { DraftModule } from './draft/draft.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     SecretModule,
     EnvironmentModule,
+    PassportModule,
+    SupabaseModule,
     AnalyserModule,
     ChatGptModule,
     StoryModule,
+    DraftModule,
     PromptModule,
     ParserModule,
     FeatureFlagModule,
