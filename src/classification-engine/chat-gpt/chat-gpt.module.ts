@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ChatGptService } from './chat-gpt.service';
-import { ConfigModule } from '@nestjs/config';
+import { EnvironmentModule } from '../../environment/environment.module';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [EnvironmentModule],
   providers: [ChatGptService],
   exports: [ChatGptService],
 })

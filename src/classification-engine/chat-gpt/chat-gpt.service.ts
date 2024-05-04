@@ -1,14 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 import { Prompt } from '../prompt';
+import { EnvironmentService } from '../../environment/environment.service';
 
 @Injectable()
 export class ChatGptService {
   private readonly client: OpenAI;
 
-  constructor(configService: ConfigService) {
-    this.client = new OpenAI({ apiKey: configService.get('OPENAI_API_KEY') });
+  constructor(private readonly environmentService: EnvironmentService) {
+    const apiKey = this.environmentService.getOpenAiApiKey();
+
+    if (!apiKey) {
+      throw new Error('OpenAI API key is not defined');
+    }
+
+    this.client = new OpenAI({ apiKey });
   }
 
   private async getResponse(prompt: string, sentiment?: string) {

@@ -17,6 +17,6 @@ export class FeatureFlagService {
   isFlagEnabled(feature: Feature) {
     const enabled = this.secretService.getValue(feature, 'false');
 
-    return enabled.ok ? enabled.val === 'true' : false;
+    return enabled === 'true';
   }
 }
