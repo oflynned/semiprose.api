@@ -4,9 +4,7 @@ import { CreateDraftDto } from './dto/create-draft.dto';
 import { PromptService } from '../prompt/prompt.service';
 import { UserEntity } from '../entity';
 import { User } from '../decorators/user.decorator';
-import { SupabaseGuard } from '../supabase/supabase.guard';
 
-@UseGuards(SupabaseGuard)
 @Controller('/drafts')
 export class DraftController {
   constructor(
@@ -26,7 +24,10 @@ export class DraftController {
   }
 
   @Get('/:draftId')
-  getDraftById(@Param('draftId') draftId: string, @User() user: UserEntity) {
+  async getDraftById(
+    @Param('draftId') draftId: string,
+    @User() user: UserEntity,
+  ) {
     return this.draftService.getDraftById(draftId, user);
   }
 }

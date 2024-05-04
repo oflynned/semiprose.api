@@ -1,6 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+import { UserEntity } from './entity';
+
 require('dotenv').config();
 
+import { Err } from 'ts-results';
 import { defineConfig } from '@mikro-orm/postgresql';
 import { ConfigService } from '@nestjs/config';
 import { EnvironmentService } from './environment/environment.service';
@@ -12,25 +15,25 @@ const secretService = new SecretService(configService);
 const environmentService = new EnvironmentService(secretService);
 const url = environmentService.getDatabaseUrl();
 
-if (!url.ok) {
-  throw url.val;
+if (!url) {
+  throw new Err('Database URL is not set');
 }
 
 const certificate = environmentService.getDatabaseCertificate();
 
-const sslOptions = certificate.ok
+const sslOptions = certificate
   ? {
       connection: {
         ssl: {
-          ca: certificate.val,
+          ca: certificate,
         },
       },
     }
   : {};
 
 export default defineConfig({
-  clientUrl: url.val,
-  entities: [WaitlistEntity],
+  clientUrl: url,
+  entities: [WaitlistEntity, UserEntity],
   migrations: {
     disableForeignKeys: false,
   },

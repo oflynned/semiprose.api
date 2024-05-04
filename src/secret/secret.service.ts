@@ -1,39 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SecretNotFoundException } from './secret-not-found.exception';
-import { Err, Ok, Result } from 'ts-results';
+import { isDefined } from '../is-defined';
 
 @Injectable()
 export class SecretService {
   constructor(private readonly configService: ConfigService) {}
 
-  getValue(
-    key: string,
-    defaultValue?: string,
-  ): Result<string, SecretNotFoundException> {
-    const secret = this.configService.get(key);
+  getValue(key: string, defaultValue?: string): string | null {
+    const secret = this.configService.get<string | undefined>(key);
 
-    if (secret) {
-      return Ok(secret);
+    if (isDefined(secret)) {
+      return secret;
     }
 
-    if (defaultValue) {
-      return Ok(defaultValue);
+    if (isDefined(defaultValue)) {
+      return defaultValue;
     }
 
-    return Err(new SecretNotFoundException());
+    return null;
   }
 
-  getDecodedValue(key: string): Result<string, SecretNotFoundException> {
+  getDecodedValue(key: string) {
     const decode = (value: string) =>
       Buffer.from(value, 'base64').toString('utf-8');
 
-    const secret = this.configService.get(key);
+    const secret = this.configService.get<string>(key);
 
     if (secret) {
-      return Ok(decode(secret));
+      return decode(secret);
     }
 
-    return Err(new SecretNotFoundException());
+    return null;
   }
 }

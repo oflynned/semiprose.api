@@ -16,25 +16,31 @@ export class UserEntity {
   id = v4();
 
   @Property()
+  firebaseId: string;
+
+  @Property()
+  email: string;
+
+  @Property()
+  username: string;
+
+  @Property()
+  authenticationMethod: string;
+
+  @Property()
   createdAt = new Date();
 
-  @Property()
-  name: string;
-
-  @Property()
+  @Property({ nullable: true })
   biography?: string;
 
-  @Property()
+  @Property({ nullable: true })
   lastUpdatedAt?: Date;
 
-  @Property()
+  @Property({ nullable: true })
   deletedAt?: Date;
 
   @Property()
   lastActiveAt: Date;
-
-  @Property()
-  email: string;
 
   @OneToMany(() => StoryEntity, (story) => story.author)
   stories = new Collection<StoryEntity>(this);
@@ -44,4 +50,8 @@ export class UserEntity {
 
   @OneToMany(() => CommentEntity, (comment) => comment.author)
   comments = new Collection<CommentEntity>(this);
+
+  get initials() {
+    return this.username.split('')[0];
+  }
 }

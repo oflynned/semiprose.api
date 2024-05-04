@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -15,20 +15,20 @@ import { SecretModule } from './secret/secret.module';
 import { EnvironmentModule } from './environment/environment.module';
 import { EnvironmentService } from './environment/environment.service';
 import { defineConfig } from '@mikro-orm/postgresql';
-import { SupabaseModule } from './supabase/supabase.module';
-import { PassportModule } from '@nestjs/passport';
 import { DraftModule } from './draft/draft.module';
+import { HttpLoggerMiddleware } from './logger/request.logger';
+import { UserModule } from './user/user.module';
+import { UserEntity } from './entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     SecretModule,
     EnvironmentModule,
-    PassportModule,
-    SupabaseModule,
     AnalyserModule,
     ChatGptModule,
     StoryModule,
+    UserModule,
     DraftModule,
     PromptModule,
     ParserModule,
@@ -40,27 +40,27 @@ import { DraftModule } from './draft/draft.module';
       useFactory: (envVarService: EnvironmentService) => {
         const url = envVarService.getDatabaseUrl();
         const certificate = envVarService.getDatabaseCertificate();
-        const sslOptions = certificate.ok
+        const sslOptions = certificate
           ? {
               connection: {
                 ssl: {
-                  ca: certificate.val,
+                  ca: certificate,
                 },
               },
             }
           : {};
 
-        if (!url.ok) {
+        if (!url) {
           throw new Error('DATABASE_URL is not set');
         }
 
         return defineConfig({
-          clientUrl: url.val,
+          clientUrl: url,
           driverOptions: {
             ...sslOptions,
             keepAlive: true,
           },
-          entities: [WaitlistEntity],
+          entities: [WaitlistEntity, UserEntity],
         });
       },
     }),
@@ -68,4 +68,8 @@ import { DraftModule } from './draft/draft.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(HttpLoggerMiddleware).forRoutes('*');
+  }
+}
