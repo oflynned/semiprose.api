@@ -9,8 +9,8 @@ dependencies:
     specifier: ^6.0.0
     version: 6.2.5
   '@mikro-orm/nestjs':
-    specifier: ^5.2.2
-    version: 5.2.3(@mikro-orm/core@6.2.5)(@nestjs/common@10.3.8)(@nestjs/core@10.3.8)
+    specifier: ^6.0.0
+    version: 6.0.1(@mikro-orm/core@6.2.5)(@nestjs/common@10.3.8)(@nestjs/core@10.3.8)
   '@mikro-orm/postgresql':
     specifier: ^6.0.0
     version: 6.2.5(@mikro-orm/core@6.2.5)
@@ -1514,13 +1514,13 @@ packages:
       - tedious
     dev: true
 
-  /@mikro-orm/nestjs@5.2.3(@mikro-orm/core@6.2.5)(@nestjs/common@10.3.8)(@nestjs/core@10.3.8):
-    resolution: {integrity: sha512-JMxaXrNXlo6j59D3LWMC1tEC1a5JanCtqdfv91JUH0sfVZh97SsjQ9K794BY3JWIUKSFyQwpnLxYZ0Ash/BlPA==}
-    engines: {node: '>= 14.0.0'}
+  /@mikro-orm/nestjs@6.0.1(@mikro-orm/core@6.2.5)(@nestjs/common@10.3.8)(@nestjs/core@10.3.8):
+    resolution: {integrity: sha512-7KZ3pyg/iY8Zlylg65DHekoMauywzr5W+3Iac9rlyPML0oxDnBRuzN5Sbk+EgfNEft1yo6b7cvzjeVzIV/ijrg==}
+    engines: {node: '>= 18.12.0'}
     peerDependencies:
-      '@mikro-orm/core': ^5.0.0 || ^6.0.0-dev.0
-      '@nestjs/common': ^8.0.0 || ^9.0.0 || ^10.0.0
-      '@nestjs/core': ^8.0.0 || ^9.0.0 || ^10.0.0
+      '@mikro-orm/core': ^6.0.0
+      '@nestjs/common': ^10.0.0
+      '@nestjs/core': ^10.0.0
     dependencies:
       '@mikro-orm/core': 6.2.5
       '@nestjs/common': 10.3.8(reflect-metadata@0.2.2)(rxjs@7.8.1)
